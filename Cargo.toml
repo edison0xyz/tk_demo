@@ -5,6 +5,7 @@ edition = "2021"
 
 [dependencies]
 dotenvy = "0.15.7"
+rand = "0.9.1"
 tokio = { version = "1.45.0", features = ["full"] }
 turnkey_api_key_stamper = "0.0.2"
 turnkey_client = "0.0.2"

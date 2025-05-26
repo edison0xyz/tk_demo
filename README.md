@@ -1,39 +1,43 @@
-# Turnkey Organization ID Query Script
+# Turnkey Prototype
 
-This script queries your current organization ID using the Turnkey client.
+Sample repo to try and demonstrate different functionalities for turnkey in rust.
 
 ## Setup
 
-1. Create the examples directory and .env file:
-   ```bash
-   mkdir -p examples
-   ```
+* Copy the env from `.env.example` to `.env`
 
-2. Create `examples/.env` file with your Turnkey credentials:
-   ```env
-   # Your Turnkey organization ID
-   TURNKEY_ORGANIZATION_ID=your_organization_id_here
+## Running the Programs
+
+This project contains multiple executable programs organized in the `src/bin/` directory.
+
+### Run the default program
+```bash
+cargo run
+```
+
+### Run specific programs
+```bash
+# Create a new wallet with a random 6-character name
+cargo run --bin create
+```
+
+### Available Programs
+
+- **create**: Creates a new Ethereum wallet with a randomly generated 6-character name
+
+## Adding New Programs
+
+To add more functionality as separate programs:
+
+1. Create a new file in `src/bin/` (e.g., `src/bin/list_wallets.rs`)
+2. Add your main function and import shared utilities:
+   ```rust
+   use turnkey_prototype::utils::load_api_key_from_env;
    
-   # Your Turnkey API public key 
-   TURNKEY_API_PUBLIC_KEY=your_api_public_key_here
-   
-   # Your Turnkey API private key
-   TURNKEY_API_PRIVATE_KEY=your_api_private_key_here
+   #[tokio::main]
+   async fn main() -> Result<(), Box<dyn std::error::Error>> {
+       // Your code here
+       Ok(())
+   }
    ```
-
-3. Run the script:
-   ```bash
-   cargo run
-   ```
-
-## What the script does
-
-The script will:
-- Load your API credentials from the environment
-- Initialize the Turnkey client
-- Display your current organization ID
-- Show the current timestamp to verify the client connection
-
-## Notes
-
-The organization ID is typically stored as an environment variable rather than queried from the API, as it's required for most Turnkey API calls. 
+3. Run it with: `cargo run --bin <filename_without_extension>`
