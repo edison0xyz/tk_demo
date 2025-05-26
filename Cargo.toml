@@ -1,0 +1,10 @@
+[package]
+name = "turnkey_prototype"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+dotenvy = "0.15.7"
+tokio = { version = "1.45.0", features = ["full"] }
+turnkey_api_key_stamper = "0.0.2"
+turnkey_client = "0.0.2"
