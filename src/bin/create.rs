@@ -2,12 +2,12 @@ use std::env;
 use std::error::Error;
 use rand::{rng, Rng};
 use turnkey_client::TurnkeyClient;
-use turnkey_client::generated::{CreateWalletIntent};
+use turnkey_client::generated::{CreateWalletIntent, ExportWalletIntent};
 use turnkey_client::generated::{
     immutable::common::v1::{AddressFormat, Curve, PathFormat},
     WalletAccountParams,
 };
-
+use turnkey_enclave_encrypt::{ExportClient, QuorumPublicKey};
 use turnkey_prototype::utils::load_api_key_from_env;
 
 #[tokio::main]
@@ -62,7 +62,39 @@ async fn main() -> Result<(), Box<dyn Error>> {
         .await?;
     assert_eq!(create_wallet_result.addresses.len(), 1);
     let eth_address = create_wallet_result.addresses.first().unwrap();
+    let wallet_id = create_wallet_result.wallet_id;
     println!("Ethereum address: {}", eth_address);
+    println!("Wallet ID: {}", wallet_id);
+
+    // Export Wallet
+    let mut export_client = ExportClient::new(&QuorumPublicKey::production_signer());
+    let export_wallet_result = client
+        .export_wallet(
+            organization_id.clone(),
+            client.current_timestamp(),
+            ExportWalletIntent {
+                wallet_id: wallet_id.clone(),
+                target_public_key: export_client.target_public_key()?,
+                language: None,
+            },
+        )
+        .await?;
+
+    let export_bundle = export_wallet_result.export_bundle;
+    let mnemonic_phrase =
+        export_client.decrypt_wallet_mnemonic_phrase(export_bundle, organization_id.clone())?;
+
+    assert_eq!(export_wallet_result.wallet_id, wallet_id);
+    println!(
+        "Wallet successfully exported: {} (Mnemonic phrase: {})",
+        export_wallet_result.wallet_id,
+        truncate_mnemonic_phrase(&mnemonic_phrase)
+    );
 
     Ok(())
+}
+
+fn truncate_mnemonic_phrase(mnemonic_phrase: &str) -> String {
+    let words : Vec<&str> = mnemonic_phrase.split_whitespace().collect();
+    format!("{}...{}", words.first().unwrap(), words.last().unwrap())
 }
