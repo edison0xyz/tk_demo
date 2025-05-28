@@ -19,11 +19,19 @@ cargo run
 ```bash
 # Create a new wallet with a random 6-character name
 cargo run --bin create
+
+# Sign a raw message payload
+cargo run --bin sign_message
+
+# Sign EIP-712 typed data (USDC permit example)
+cargo run --bin sign_typed_data
 ```
 
 ### Available Programs
 
 - **create**: Creates a new Ethereum wallet with a randomly generated 6-character name
+- **sign_message**: Signs a raw message payload using Turnkey
+- **sign_typed_data**: Demonstrates EIP-712 typed data signing with Turnkey (USDC permit example)
 
 ## Adding New Programs
 
